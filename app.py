@@ -854,14 +854,25 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     port = 8000
+    host = "127.0.0.1"
     args = sys.argv[1:]
     if "--port" in args:
         try:
             port = int(args[args.index("--port") + 1])
         except (IndexError, ValueError):
             pass
-    print("Deadass BBQ Toolkit  →  http://127.0.0.1:%d  (Ctrl+C to stop)" % port)
-    HTTPServer(("127.0.0.1", port), Handler).serve_forever()
+    if "--host" in args:
+        try:
+            host = args[args.index("--host") + 1]
+        except IndexError:
+            pass
+    # NOTE: the default (127.0.0.1) only allows this machine. To reach the app
+    # from your phone over Tailscale, run:  python3 app.py --host 0.0.0.0
+    # and open http://<this-computer's-tailscale-ip>:<port> on the phone.
+    # Only do this on a private network (e.g. Tailscale) — never the open internet.
+    shown = "localhost" if host in ("127.0.0.1", "localhost") else host
+    print("Deadass BBQ Toolkit  →  http://%s:%d  (Ctrl+C to stop)" % (shown, port))
+    HTTPServer((host, port), Handler).serve_forever()
 
 
 if __name__ == "__main__":

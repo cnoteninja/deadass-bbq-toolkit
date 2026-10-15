@@ -8,6 +8,8 @@ Ingredient sourcing & recipe costing + nutrition/ingredient label maker for
 ```bash
 python3 app.py            # → http://127.0.0.1:8000
 python3 app.py --port 8080
+python3 app.py --host 0.0.0.0   # allow other devices on your private network
+                                # (e.g. phone over Tailscale) — never the open internet
 python3 check_setup.py    # prerequisite check
 ```
 
