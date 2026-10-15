@@ -5,17 +5,21 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Deadass BBQ Toolkit</title>
 <style>
-:root{--brand:#3a2317;--accent:#b3401f;--accent-d:#93331a;--bg:#f5f1ea;--card:#fff;
---line:#e0d5c3;--ink:#2b2118;--muted:#6b5d4d;--good:#e8f7e4;--warnbg:#fff3c4}
+:root{--brand:#0d0d0d;--accent:#c00000;--accent-d:#8f0000;--bg:#141414;--card:#1e1e1e;
+--line:#333333;--ink:#f4f4f4;--muted:#a3a3a3;--good:#14301a;--warnbg:#33270a}
 *{box-sizing:border-box}
 body{font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;margin:0;
 background:var(--bg);color:var(--ink);line-height:1.5;padding-bottom:76px}
-header{background:var(--brand);color:#fff;padding:12px 16px;display:flex;
-align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:10}
+header{background:var(--brand);color:#fff;padding:10px 16px;display:flex;
+align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:10;
+border-bottom:3px solid var(--accent)}
+header .brand{display:flex;align-items:center;gap:10px}
+header .logo{height:44px;width:44px;border-radius:50%;object-fit:cover;border:2px solid var(--accent)}
+a{color:#ff8a8a}
 header .brand{font-size:1.05rem;font-weight:800}
-header .demoBtn{background:#5a3a22;color:#ffd9a8;border:1px solid #ffd9a8;border-radius:8px;
+header .demoBtn{background:#2a0d0d;color:#ff9d9d;border:1px solid var(--accent);border-radius:8px;
 padding:8px 12px;font-weight:700;font-size:.85rem;cursor:pointer;min-height:44px}
-header .demoBtn.on{background:#ffd9a8;color:#3a2317}
+header .demoBtn.on{background:var(--accent);color:#fff}
 main{max-width:720px;margin:0 auto;padding:14px 14px 24px}
 h1{font-size:1.4rem;margin:.5em 0}
 h2{font-size:1.15rem;margin:.4em 0}
@@ -26,15 +30,15 @@ padding:14px;margin:12px 0}
 padding:10px 16px;font-weight:700;cursor:pointer;text-decoration:none;font-size:.95rem;
 min-height:44px;margin:4px 4px 4px 0}
 .btn:hover{background:var(--accent-d)}
-.btn.ghost{background:#fff;color:var(--accent);border:2px solid var(--accent)}
+.btn.ghost{background:transparent;color:#ff7b7b;border:2px solid var(--accent)}
 .btn.danger{background:#8c1d18}
 .btn.small{min-height:36px;padding:6px 10px;font-size:.85rem}
 table{border-collapse:collapse;width:100%;margin:10px 0}
-th,td{border:1px solid #ddd0ba;padding:8px;text-align:left;font-size:.9rem}
+th,td{border:1px solid #3a3a3a;padding:8px;text-align:left;font-size:.9rem}
 th{background:var(--brand);color:#fff}
 tr.cheapest td{background:var(--good);font-weight:700}
-input,select,textarea{font-size:16px;padding:10px;border:1px solid #c9bda6;
-border-radius:8px;width:100%;background:#fff;color:var(--ink)}
+input,select,textarea{font-size:16px;padding:10px;border:1px solid #4a4a4a;
+border-radius:8px;width:100%;background:#262626;color:var(--ink)}
 input[type=checkbox]{width:auto;min-height:24px;min-width:24px}
 label{font-weight:600;display:block;margin:12px 0 4px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
@@ -48,9 +52,9 @@ padding:12px 14px;margin:12px 0;font-weight:700}
 /* bottom tab bar */
 #tabbar{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;
 background:var(--brand);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
-#tabbar button{flex:1;background:none;border:none;color:#ffd9a8;font-weight:700;
+#tabbar button{flex:1;background:none;border:none;color:#c9c9c9;font-weight:700;
 font-size:.82rem;padding:10px 4px;min-height:52px;cursor:pointer;border-radius:8px}
-#tabbar button.on{background:#5a3a22;color:#fff}
+#tabbar button.on{background:var(--accent);color:#fff}
 /* FDA label */
 .nf{font-family:Helvetica,Arial,sans-serif;color:#000;background:#fff;width:300px;
 border:2px solid #000;padding:8px 10px;margin:10px 0}
@@ -79,7 +83,7 @@ border:2px solid #000;padding:8px 10px;margin:10px 0}
 </head>
 <body>
 <header>
-  <span class="brand">Deadass BBQ Toolkit</span>
+  <span class="brand"><img class="logo" src="logo.jpg" alt="Deadass BBQ logo">Deadass BBQ Toolkit</span>
   <button class="demoBtn" id="demoToggle" type="button">View demo</button>
 </header>
 <div id="demoBanner" class="demo-banner" hidden style="max-width:720px;margin:12px auto 0;padding:12px 14px">
