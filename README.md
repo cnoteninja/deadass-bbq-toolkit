@@ -3,7 +3,19 @@
 Ingredient sourcing & recipe costing + nutrition/ingredient label maker for
 **DeadassBBQ LLC**. Python stdlib only — no dependencies, no build step.
 
-## Run it
+## Phone / browser version (no server needed)
+
+A full static version lives in `docs/index.html` — same features as the Python
+app (ingredients, suppliers, recipes, costing, label maker, demo data, USDA
+lookup, JSON backup), plus **barcode scanning** (camera or manual entry, looked
+up via Open Food Facts). Data is stored in your browser's localStorage.
+
+**Live URL:** https://cnoteninja.github.io/deadass-bbq-toolkit/
+
+To turn it on: repo Settings → Pages → Source "Deploy from a branch" →
+branch `main`, folder `/docs` → Save. The page goes live within a minute or two.
+
+## Run it (Python version)
 
 ```bash
 python3 app.py            # → http://127.0.0.1:8000
