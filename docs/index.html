@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Deadass BBQ Toolkit</title>
+<style>
+:root{--brand:#3a2317;--accent:#b3401f;--accent-d:#93331a;--bg:#f5f1ea;--card:#fff;
+--line:#e0d5c3;--ink:#2b2118;--muted:#6b5d4d;--good:#e8f7e4;--warnbg:#fff3c4}
+*{box-sizing:border-box}
+body{font-family:-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;margin:0;
+background:var(--bg);color:var(--ink);line-height:1.5;padding-bottom:76px}
+header{background:var(--brand);color:#fff;padding:12px 16px;display:flex;
+align-items:center;justify-content:space-between;gap:10px;position:sticky;top:0;z-index:10}
+header .brand{font-size:1.05rem;font-weight:800}
+header .demoBtn{background:#5a3a22;color:#ffd9a8;border:1px solid #ffd9a8;border-radius:8px;
+padding:8px 12px;font-weight:700;font-size:.85rem;cursor:pointer;min-height:44px}
+header .demoBtn.on{background:#ffd9a8;color:#3a2317}
+main{max-width:720px;margin:0 auto;padding:14px 14px 24px}
+h1{font-size:1.4rem;margin:.5em 0}
+h2{font-size:1.15rem;margin:.4em 0}
+h3{font-size:1rem;margin:.4em 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;
+padding:14px;margin:12px 0}
+.btn{display:inline-block;background:var(--accent);color:#fff;border:none;border-radius:8px;
+padding:10px 16px;font-weight:700;cursor:pointer;text-decoration:none;font-size:.95rem;
+min-height:44px;margin:4px 4px 4px 0}
+.btn:hover{background:var(--accent-d)}
+.btn.ghost{background:#fff;color:var(--accent);border:2px solid var(--accent)}
+.btn.danger{background:#8c1d18}
+.btn.small{min-height:36px;padding:6px 10px;font-size:.85rem}
+table{border-collapse:collapse;width:100%;margin:10px 0}
+th,td{border:1px solid #ddd0ba;padding:8px;text-align:left;font-size:.9rem}
+th{background:var(--brand);color:#fff}
+tr.cheapest td{background:var(--good);font-weight:700}
+input,select,textarea{font-size:16px;padding:10px;border:1px solid #c9bda6;
+border-radius:8px;width:100%;background:#fff;color:var(--ink)}
+input[type=checkbox]{width:auto;min-height:24px;min-width:24px}
+label{font-weight:600;display:block;margin:12px 0 4px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.small{font-size:.82rem;color:var(--muted)}
+.warn{background:var(--warnbg);border-left:5px solid #b98a00;padding:12px 14px;margin:12px 0;
+border-radius:0 8px 8px 0}
+.demo-banner{background:var(--warnbg);border:2px dashed #b98a00;border-radius:10px;
+padding:12px 14px;margin:12px 0;font-weight:700}
+.check{display:inline-flex;align-items:center;gap:8px;margin:6px 14px 6px 0;font-weight:400}
+/* bottom tab bar */
+#tabbar{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;
+background:var(--brand);padding:6px 6px calc(6px + env(safe-area-inset-bottom))}
+#tabbar button{flex:1;background:none;border:none;color:#ffd9a8;font-weight:700;
+font-size:.82rem;padding:10px 4px;min-height:52px;cursor:pointer;border-radius:8px}
+#tabbar button.on{background:#5a3a22;color:#fff}
+/* FDA label */
+.nf{font-family:Helvetica,Arial,sans-serif;color:#000;background:#fff;width:300px;
+border:2px solid #000;padding:8px 10px;margin:10px 0}
+.nf h2{font-size:2rem;margin:0;font-weight:900;letter-spacing:-1px;color:#000}
+.nf .rule{background:#000;height:12px;margin:6px 0}
+.nf .rule.med{height:6px}
+.nf .rule.thin{height:1px;margin:2px 0}
+.nf table{width:100%;border-collapse:collapse;font-size:.82rem;margin:0}
+.nf td{border:none;padding:2px 0;vertical-align:top}
+.nf .r{text-align:right}
+.nf .b{font-weight:700}
+.nf .ind1{padding-left:12px}.nf .ind2{padding-left:24px}
+.nf .cal{font-size:1.9rem;font-weight:900}
+.nf .foot{font-size:.68rem;margin-top:6px}
+.nf .dvhead{text-align:right;font-weight:700;font-size:.78rem}
+.msg{padding:10px 14px;border-radius:8px;margin:10px 0;font-size:.92rem}
+.msg.err{background:#fde8e6;border:1px solid #c0392b}
+.msg.ok{background:var(--good);border:1px solid #2e7d32}
+@media print{
+  header,#tabbar,.noprint,#demoBanner,.demo-banner{display:none!important}
+  body{background:#fff;padding-bottom:0}
+  main{max-width:100%;padding:0}
+  .card{border:none;margin:0;padding:6px 0}
+}
+</style>
+</head>
+<body>
+<header>
+  <span class="brand">Deadass BBQ Toolkit</span>
+  <button class="demoBtn" id="demoToggle" type="button">View demo</button>
+</header>
+<div id="demoBanner" class="demo-banner" hidden style="max-width:720px;margin:12px auto 0;padding:12px 14px">
+  DEMO &mdash; sample data. Switch back to &ldquo;My data&rdquo; to use your own ingredients and recipes.
+</div>
+<main id="view"></main>
+<nav id="tabbar" aria-label="Sections">
+  <button type="button" data-v="ingredients">Ingredients</button>
+  <button type="button" data-v="recipes">Recipes</button>
+  <button type="button" data-v="labels">Labels</button>
+  <button type="button" data-v="backup">Backup</button>
+</nav>
+<script>
+// Embedded data — generated from data/*.json (do not hand-edit)
+const BASE_TABLE = {"apple_cider_vinegar":{"calories":21,"carbs_g":0.9,"cholesterol_mg":0,"fat_g":0.0,"fiber_g":0.0,"potassium_mg":73,"protein_g":0.0,"sat_fat_g":0.0,"sodium_mg":5,"source":"estimate","sugars_g":0.4},"black_pepper":{"calories":251,"carbs_g":64.0,"cholesterol_mg":0,"fat_g":3.3,"fiber_g":25.3,"potassium_mg":1329,"protein_g":10.4,"sat_fat_g":1.4,"sodium_mg":20,"source":"estimate","sugars_g":0.6},"bourbon":{"calories":241,"carbs_g":0.1,"cholesterol_mg":0,"fat_g":0.0,"fiber_g":0.0,"potassium_mg":2,"protein_g":0.0,"sat_fat_g":0.0,"sodium_mg":1,"source":"estimate","sugars_g":0.0},"brewed_coffee":{"calories":1,"carbs_g":0.0,"cholesterol_mg":0,"fat_g":0.0,"fiber_g":0.0,"potassium_mg":49,"protein_g":0.3,"sat_fat_g":0.0,"sodium_mg":2,"source":"estimate","sugars_g":0.0},"brown_sugar":{"calories":380,"carbs_g":98.1,"cholesterol_mg":0,"fat_g":0.0,"fiber_g":0.0,"potassium_mg":133,"protein_g":0.1,"sat_fat_g":0.0,"sodium_mg":28,"source":"estimate","sugars_g":96.8},"butter":{"calories":717,"carbs_g":0.1,"cholesterol_mg":215,"fat_g":81.1,"fiber_g":0.0,"potassium_mg":24,"protein_g":0.9,"sat_fat_g":51.4,"sodium_mg":643,"source":"estimate","sugars_g":0.1},"canola_oil":{"calories":884,"carbs_g":0.0,"cholesterol_mg":0,"fat_g":100.0,"fiber_g":0.0,"potassium_mg":0,"protein_g":0.0,"sat_fat_g":7.4,"sodium_mg":0,"source":"estimate","sugars_g":0.0},"cayenne_pepper":{"calories":318,"carbs_g":56.6,"cholesterol_mg":0,"fat_g":17.3,"fiber_g":27.2,"potassium_mg":2010,"protein_g":12.0,"sat_fat_g":3.2,"sodium_mg":30,"source":"estimate","sugars_g":10.3},"chili_powder":{"calories":282,"carbs_g":49.7,"cholesterol_mg":0,"fat_g":14.3,"fiber_g":34.8,"potassium_mg":1950,"protein_g":13.5,"sat_fat_g":2.5,"sodium_mg":3070,"source":"estimate","sugars_g":1.7},"dijon_mustard":{"calories":168,"carbs_g":8.7,"cholesterol_mg":0,"fat_g":12.9,"fiber_g":2.7,"potassium_mg":236,"protein_g":8.7,"sat_fat_g":0.9,"sodium_mg":3464,"source":"estimate","sugars_g":4.7},"distilled_white_vinegar":{"calories":18,"carbs_g":0.04,"cholesterol_mg":0,"fat_g":0.0,"fiber_g":0.0,"potassium_mg":2,"protein_g":0.0,"sat_fat_g":0.0,"sodium_mg":5,"source":"estimate","sugars_g":0.0},"fresh_garlic":{"calories":149,"carbs_g":33.1,"cholesterol_mg":0,"fat_g":0.5,"fiber_g":2.1,"potassium_mg":401,"protein_g":6.4,"sat_fat_g":0.1,"sodium_mg":17,"source":"estimate","sugars_g":1.0},"fresh_onion":{"calories":40,"carbs_g":9.3,"cholesterol_mg":0,"fat_g":0.1,"fiber_g":1.7,"potassium_mg":146,"protein_g":1.1,"sat_fat_g":0.0,"sodium_mg":4,"source":"estimate","sugars_g":4.2},"garlic_powder":{"calories":331,"carbs_g":72.7,"cholesterol_mg":0,"fat_g":0.7,"fiber_g":9.0,"potassium_mg":1193,"protein_g":16.6,"sat_fat_g":0.2,"sodium_mg":60,"source":"estimate","sugars_g":2.4},"ground_cumin":{"calories":375,"carbs_g":44.2,"cholesterol_mg":0,"fat_g":22.3,"fiber_g":10.5,"potassium_mg":1788,"protein_g":17.8,"sat_fat_g":1.5,"sodium_mg":168,"source":"estimate","sugars_g":2.3},"honey":{"calories":304,"carbs_g":82.4,"cholesterol_mg":0,"fat_g":0.0,"fiber_g":0.2,"potassium_mg":52,"protein_g":0.3,"sat_fat_g":0.0,"sodium_mg":4,"source":"estimate","sugars_g":82.1},"ketchup":{"calories":101,"carbs_g":27.0,"cholesterol_mg":0,"fat_g":0.4,"fiber_g":0.3,"potassium_mg":249,"protein_g":1.7,"sat_fat_g":0.0,"sodium_mg":907,"source":"estimate","sugars_g":22.2},"liquid_smoke":{"calories":0,"carbs_g":0.0,"cholesterol_mg":0,"fat_g":0.0,"fiber_g":0.0,"potassium_mg":0,"protein_g":0.0,"sat_fat_g":0.0,"sodium_mg":0,"source":"estimate","sugars_g":0.0},"molasses":{"calories":290,"carbs_g":74.7,"cholesterol_mg":0,"fat_g":0.1,"fiber_g":0.0,"potassium_mg":1464,"protein_g":0.0,"sat_fat_g":0.0,"sodium_mg":37,"source":"estimate","sugars_g":74.7},"mustard_powder":{"calories":508,"carbs_g":28.1,"cholesterol_mg":0,"fat_g":36.2,"fiber_g":12.2,"potassium_mg":738,"protein_g":26.1,"sat_fat_g":1.9,"sodium_mg":13,"source":"estimate","sugars_g":6.9},"onion_powder":{"calories":341,"carbs_g":79.1,"cholesterol_mg":0,"fat_g":1.1,"fiber_g":15.1,"potassium_mg":1170,"protein_g":10.4,"sat_fat_g":0.2,"sodium_mg":210,"source":"estimate","sugars_g":5.0},"red_wine_vinegar":{"calories":19,"carbs_g":0.3,"cholesterol_mg":0,"fat_g":0.0,"fiber_g":0.0,"potassium_mg":39,"protein_g":0.0,"sat_fat_g":0.0,"sodium_mg":8,"source":"estimate","sugars_g":0.0},"smoked_paprika":{"calories":282,"carbs_g":54.0,"cholesterol_mg":0,"fat_g":12.9,"fiber_g":34.9,"potassium_mg":2280,"protein_g":14.1,"sat_fat_g":2.1,"sodium_mg":68,"source":"estimate","sugars_g":10.3},"soy_sauce":{"calories":53,"carbs_g":4.9,"cholesterol_mg":0,"fat_g":0.6,"fiber_g":0.8,"potassium_mg":435,"protein_g":8.1,"sat_fat_g":0.1,"sodium_mg":5493,"source":"estimate","sugars_g":0.4},"table_salt":{"calories":0,"carbs_g":0.0,"cholesterol_mg":0,"fat_g":0.0,"fiber_g":0.0,"potassium_mg":8,"protein_g":0.0,"sat_fat_g":0.0,"sodium_mg":38758,"source":"estimate","sugars_g":0.0},"tomato_paste":{"calories":82,"carbs_g":19.0,"cholesterol_mg":0,"fat_g":0.5,"fiber_g":4.2,"potassium_mg":1014,"protein_g":4.3,"sat_fat_g":0.1,"sodium_mg":59,"source":"estimate","sugars_g":12.2},"tomato_sauce":{"calories":24,"carbs_g":5.7,"cholesterol_mg":0,"fat_g":0.3,"fiber_g":1.3,"potassium_mg":218,"protein_g":1.2,"sat_fat_g":0.0,"sodium_mg":232,"source":"estimate","sugars_g":3.6},"white_sugar":{"calories":387,"carbs_g":100.0,"cholesterol_mg":0,"fat_g":0.0,"fiber_g":0.0,"potassium_mg":2,"protein_g":0.0,"sat_fat_g":0.0,"sodium_mg":1,"source":"estimate","sugars_g":99.9},"worcestershire_sauce":{"calories":78,"carbs_g":19.5,"cholesterol_mg":0,"fat_g":0.0,"fiber_g":0.0,"potassium_mg":800,"protein_g":0.0,"sat_fat_g":0.0,"sodium_mg":806,"source":"estimate","sugars_g":10.0},"yellow_mustard":{"calories":66,"carbs_g":5.8,"cholesterol_mg":0,"fat_g":3.3,"fiber_g":4.0,"potassium_mg":114,"protein_g":3.7,"sat_fat_g":0.2,"sodium_mg":1120,"source":"estimate","sugars_g":0.9}};
+const DEMO_INGREDIENTS = [{"allergens":[],"category":"base","name":"Tomato Paste","nutrition_key":"tomato_paste","suppliers":[{"price":8.49,"size_amount":6,"size_unit":"lb","supplier":"Restaurant Depot"},{"price":12.99,"size_amount":6,"size_unit":"lb","supplier":"WebstaurantStore"}]},{"allergens":[],"category":"acid","name":"Apple Cider Vinegar","nutrition_key":"apple_cider_vinegar","suppliers":[{"price":9.99,"size_amount":128,"size_unit":"fl oz","supplier":"Restaurant Depot"},{"price":14.5,"size_amount":128,"size_unit":"fl oz","supplier":"WebstaurantStore"}]},{"allergens":[],"category":"sweetener","name":"Brown Sugar","nutrition_key":"brown_sugar","suppliers":[{"price":11.99,"size_amount":12,"size_unit":"lb","supplier":"Restaurant Depot"},{"price":16.99,"size_amount":12,"size_unit":"lb","supplier":"WebstaurantStore"}]},{"allergens":[],"category":"sweetener","name":"Molasses","nutrition_key":"molasses","suppliers":[{"price":10.49,"size_amount":128,"size_unit":"fl oz","supplier":"WebstaurantStore"},{"price":13.99,"size_amount":128,"size_unit":"fl oz","supplier":"Amazon"}]},{"allergens":[],"category":"sweetener","name":"Honey","nutrition_key":"honey","suppliers":[{"price":24.99,"size_amount":5,"size_unit":"lb","supplier":"Restaurant Depot"},{"price":29.99,"size_amount":5,"size_unit":"lb","supplier":"Amazon"}]},{"allergens":[],"category":"seasoning","name":"Worcestershire Sauce","nutrition_key":"worcestershire_sauce","suppliers":[{"price":7.99,"size_amount":64,"size_unit":"fl oz","supplier":"WebstaurantStore"},{"price":11.49,"size_amount":64,"size_unit":"fl oz","supplier":"Amazon"}]},{"allergens":[],"category":"seasoning","name":"Yellow Mustard","nutrition_key":"yellow_mustard","suppliers":[{"price":4.99,"size_amount":105,"size_unit":"oz","supplier":"Restaurant Depot"},{"price":6.79,"size_amount":105,"size_unit":"oz","supplier":"WebstaurantStore"}]},{"allergens":["soybeans","wheat"],"category":"seasoning","name":"Soy Sauce","nutrition_key":"soy_sauce","suppliers":[{"price":9.49,"size_amount":1,"size_unit":"gal","supplier":"Restaurant Depot"},{"price":12.99,"size_amount":1,"size_unit":"gal","supplier":"WebstaurantStore"}]},{"allergens":[],"category":"seasoning","name":"Liquid Smoke","nutrition_key":"liquid_smoke","suppliers":[{"price":3.49,"size_amount":4,"size_unit":"fl oz","supplier":"Amazon"},{"price":4.29,"size_amount":4,"size_unit":"fl oz","supplier":"WebstaurantStore"}]},{"allergens":[],"category":"spice","name":"Smoked Paprika","nutrition_key":"smoked_paprika","suppliers":[{"price":8.99,"size_amount":16,"size_unit":"oz","supplier":"WebstaurantStore"},{"price":12.49,"size_amount":16,"size_unit":"oz","supplier":"Amazon"}]},{"allergens":[],"category":"spice","name":"Chili Powder","nutrition_key":"chili_powder","suppliers":[{"price":7.49,"size_amount":16,"size_unit":"oz","supplier":"Restaurant Depot"},{"price":9.99,"size_amount":16,"size_unit":"oz","supplier":"WebstaurantStore"}]},{"allergens":[],"category":"spice","name":"Cayenne Pepper","nutrition_key":"cayenne_pepper","suppliers":[{"price":6.99,"size_amount":16,"size_unit":"oz","supplier":"WebstaurantStore"},{"price":9.49,"size_amount":16,"size_unit":"oz","supplier":"Amazon"}]},{"allergens":[],"category":"spice","name":"Black Pepper","nutrition_key":"black_pepper","suppliers":[{"price":11.99,"size_amount":5,"size_unit":"lb","supplier":"Restaurant Depot"},{"price":15.99,"size_amount":5,"size_unit":"lb","supplier":"WebstaurantStore"}]},{"allergens":[],"category":"spice","name":"Garlic Powder","nutrition_key":"garlic_powder","suppliers":[{"price":9.99,"size_amount":24,"size_unit":"oz","supplier":"WebstaurantStore"},{"price":13.99,"size_amount":24,"size_unit":"oz","supplier":"Amazon"}]},{"allergens":[],"category":"spice","name":"Onion Powder","nutrition_key":"onion_powder","suppliers":[{"price":8.49,"size_amount":20,"size_unit":"oz","supplier":"Restaurant Depot"},{"price":10.99,"size_amount":20,"size_unit":"oz","supplier":"WebstaurantStore"}]},{"allergens":[],"category":"spice","name":"Ground Cumin","nutrition_key":"ground_cumin","suppliers":[{"price":7.99,"size_amount":16,"size_unit":"oz","supplier":"WebstaurantStore"},{"price":10.49,"size_amount":16,"size_unit":"oz","supplier":"Amazon"}]},{"allergens":[],"category":"seasoning","name":"Table Salt","nutrition_key":"table_salt","suppliers":[{"price":2.99,"size_amount":10,"size_unit":"lb","supplier":"Restaurant Depot"},{"price":4.49,"size_amount":10,"size_unit":"lb","supplier":"WebstaurantStore"}]},{"allergens":["milk"],"category":"fat","name":"Butter","nutrition_key":"butter","suppliers":[{"price":14.99,"size_amount":4,"size_unit":"lb","supplier":"Restaurant Depot"},{"price":18.99,"size_amount":4,"size_unit":"lb","supplier":"Amazon"}]}];
+const DEMO_RECIPES = [{"lines":[{"grams":400,"ingredient":"Tomato Paste"},{"grams":120,"ingredient":"Apple Cider Vinegar"},{"grams":150,"ingredient":"Brown Sugar"},{"grams":60,"ingredient":"Molasses"},{"grams":40,"ingredient":"Honey"},{"grams":30,"ingredient":"Worcestershire Sauce"},{"grams":25,"ingredient":"Yellow Mustard"},{"grams":20,"ingredient":"Soy Sauce"},{"grams":10,"ingredient":"Liquid Smoke"},{"grams":15,"ingredient":"Smoked Paprika"},{"grams":10,"ingredient":"Chili Powder"},{"grams":3,"ingredient":"Cayenne Pepper"},{"grams":5,"ingredient":"Black Pepper"},{"grams":8,"ingredient":"Garlic Powder"},{"grams":8,"ingredient":"Onion Powder"},{"grams":4,"ingredient":"Ground Cumin"},{"grams":12,"ingredient":"Table Salt"},{"grams":25,"ingredient":"Butter"}],"name":"Smoky Original"}];
+/* ============ constants (ported from app.py) ============ */
+const FDA_ALLERGENS = ["milk","eggs","fish","crustacean shellfish","tree nuts",
+  "peanuts","wheat","soybeans","sesame"];
+const UNITS_TO_GRAMS = {"g":1.0,"kg":1000.0,"oz":28.3495,"lb":453.592,
+  "fl oz":29.5735,"ml":1.0,"tsp":4.92892,"tbsp":14.7868,"cup":236.588,
+  "pt":473.176,"qt":946.353,"gal":3785.41};
+const UNIT_LIST = ["g","kg","oz","lb","fl oz","ml","tsp","tbsp","cup","pt","qt","gal"];
+const GRAMS_PER_OZ = 28.3495;
+const DV = {"fat_g":78,"sat_fat_g":20,"cholesterol_mg":300,"sodium_mg":2300,
+  "carbs_g":275,"fiber_g":28,"protein_g":50,"potassium_mg":4700};
+const NUTRIENT_KEYS = ["calories","fat_g","sat_fat_g","cholesterol_mg","sodium_mg",
+  "carbs_g","fiber_g","sugars_g","protein_g","potassium_mg"];
+/* FDC nutrient numbers -> per-100g schema keys (ported from usda.py) */
+const NUTRIENT_MAP = {1008:"calories",1004:"fat_g",1258:"sat_fat_g",
+  1257:"cholesterol_mg",1093:"sodium_mg",1005:"carbs_g",1079:"fiber_g",
+  269:"sugars_g",1003:"protein_g",1092:"potassium_mg"};
+const USDA_BASE = "https://api.nal.usda.gov/fdc/v1";
+
+/* ============ state ============ */
+let demoMode = false;
+let DB = {ingredients:[], recipes:[], customNutrition:{}, usdaKey:""};
+function loadDB(){
+  try{
+    const raw = localStorage.getItem("dbbq_data");
+    if(raw){
+      const d = JSON.parse(raw);
+      DB.ingredients = Array.isArray(d.ingredients) ? d.ingredients : [];
+      DB.recipes = Array.isArray(d.recipes) ? d.recipes : [];
+      DB.customNutrition = (d.customNutrition && typeof d.customNutrition==="object")
+        ? d.customNutrition : {};
+      DB.usdaKey = typeof d.usdaKey==="string" ? d.usdaKey : "";
+    }
+  }catch(e){ /* corrupted storage -> start fresh */ }
+}
+function saveDB(){
+  try{ localStorage.setItem("dbbq_data", JSON.stringify(DB)); }
+  catch(e){ /* storage full/blocked */ }
+}
+function curIngredients(){ return demoMode ? DEMO_INGREDIENTS : DB.ingredients; }
+function curRecipes(){ return demoMode ? DEMO_RECIPES : DB.recipes; }
+function mergedTable(){
+  const t = {};
+  for(const k in BASE_TABLE) t[k]=BASE_TABLE[k];
+  for(const k in DB.customNutrition) t[k]=DB.customNutrition[k];
+  return t;
+}
+
+/* ============ helpers ============ */
+function esc(s){
+  return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+/* Python's round() is banker's (round-half-to-even); JS Math.round is not.
+   This matches app.py's round_label_value / dv_percent / servings exactly. */
+function bankersRound(x){
+  const f = Math.floor(x), d = x - f;
+  if(Math.abs(d - 0.5) < 1e-9) return (f % 2 === 0) ? f : f + 1;
+  return Math.round(x);
+}
+function fmtMoney(v){ return (v==null||isNaN(v)) ? "\u2014" : "$"+Number(v).toFixed(2); }
+function fmtNum(v, dec){
+  if(v==null||isNaN(v)) return "\u2014";
+  if(dec===0) return String(Math.round(v));
+  return Number(v).toFixed(dec==null?1:dec);
+}
+function findIngredient(name, ings){
+  name = String(name).toLowerCase();
+  for(const ing of ings) if(String(ing.name).toLowerCase()===name) return ing;
+  return null;
+}
+function findRecipe(name, recs){
+  name = String(name).toLowerCase();
+  for(const r of recs) if(String(r.name).toLowerCase()===name) return r;
+  return null;
+}
+
+/* ============ costing (ported from app.py) ============ */
+function toGrams(amount, unit){
+  unit = String(unit||"g").trim().toLowerCase();
+  const f = UNITS_TO_GRAMS[unit];
+  if(f==null) throw new Error("Unknown unit: "+unit);
+  return Number(amount)*f;
+}
+function pricePerGram(s){
+  const g = toGrams(s.size_amount, s.size_unit);
+  if(!(g>0)) throw new Error("bad size");
+  return Number(s.price)/g;
+}
+function cheapestSupplier(ing){
+  let best=null, bestPpg=null, bestIdx=-1;
+  const sups = ing.suppliers||[];
+  for(let i=0;i<sups.length;i++){
+    let ppg;
+    try{ ppg = pricePerGram(sups[i]); }catch(e){ continue; }
+    if(!(ppg>=0)) continue;
+    if(bestPpg===null || ppg<bestPpg){ best=sups[i]; bestPpg=ppg; bestIdx=i; }
+  }
+  return {supplier:best, ppg:bestPpg, idx:bestIdx};
+}
+function recipeCost(recipe, ings){
+  const lines=[]; let total=0;
+  for(const line of (recipe.lines||[])){
+    const ing = findIngredient(line.ingredient, ings);
+    const grams = Number(line.grams);
+    if(!ing){
+      lines.push({name:line.ingredient, grams:grams, missing:true});
+      continue;
+    }
+    const c = cheapestSupplier(ing);
+    const cost = (c.ppg!=null) ? grams*c.ppg : null;
+    lines.push({name:ing.name, grams:grams,
+      supplier: c.supplier?c.supplier.supplier:null,
+      price_per_oz: (c.ppg!=null)?c.ppg*GRAMS_PER_OZ:null,
+      cost:cost, missing:false});
+    if(cost!=null) total+=cost;
+  }
+  return {lines:lines, total:total};
+}
+function totalGrams(recipe){
+  return (recipe.lines||[]).reduce((a,l)=>a+Number(l.grams||0),0);
+}
+
+/* ============ nutrition (ported from app.py) ============ */
+function ingredientNutrition(ing, table){
+  let entry = table[ing.nutrition_key] || {};
+  if(!entry || Object.keys(entry).length===0){
+    const k = String(ing.name).toLowerCase().replace(/ /g,"_");
+    entry = table[k] || {};
+  }
+  const out={};
+  for(const key of NUTRIENT_KEYS) out[key]=Number(entry[key]||0)||0;
+  return out;
+}
+function recipeNutritionTotals(recipe, ings, table){
+  const totals={}; for(const k of NUTRIENT_KEYS) totals[k]=0;
+  for(const line of (recipe.lines||[])){
+    const ing=findIngredient(line.ingredient, ings);
+    if(!ing) continue;
+    const nut=ingredientNutrition(ing, table);
+    const f=Number(line.grams)/100.0;
+    for(const k of NUTRIENT_KEYS) totals[k]+=nut[k]*f;
+  }
+  return totals;
+}
+function roundLabelValue(key, value){
+  const v=Number(value);
+  if(key==="calories"){
+    if(v<5) return 0;
+    if(v<=50) return 5*bankersRound(v/5);
+    return 10*bankersRound(v/10);
+  }
+  if(key==="sodium_mg"||key==="potassium_mg"||key==="cholesterol_mg"){
+    if(v<5) return 0;
+    if(v<=140) return 5*bankersRound(v/5);
+    return 10*bankersRound(v/10);
+  }
+  if(v<0.5) return 0;
+  return bankersRound(v*2)/2;
+}
+function labelNutrition(recipe, ings, table, servingG){
+  const tg=totalGrams(recipe);
+  if(!(tg>0)) return {rounded:{}, servings:0, totalG:0};
+  const servings=Math.max(1, bankersRound(tg/servingG));
+  const totals=recipeNutritionTotals(recipe, ings, table);
+  const rounded={};
+  for(const k of NUTRIENT_KEYS) rounded[k]=roundLabelValue(k, totals[k]/servings);
+  return {rounded:rounded, servings:servings, totalG:tg};
+}
+function dvPercent(key, val){
+  const ref=DV[key];
+  if(!ref) return null;
+  return Math.trunc(bankersRound(100*val/ref));
+}
+function ingredientListDesc(recipe){
+  return (recipe.lines||[]).slice()
+    .sort((a,b)=>Number(b.grams)-Number(a.grams))
+    .map(l=>l.ingredient);
+}
+function allergenStatement(recipe, ings){
+  const found=[];
+  for(const line of (recipe.lines||[])){
+    const ing=findIngredient(line.ingredient, ings);
+    if(!ing) continue;
+    for(const a of (ing.allergens||[])) if(found.indexOf(a)<0) found.push(a);
+  }
+  if(!found.length) return "Contains: none of the 9 major allergens.";
+  return "Contains: "+found.join(", ")+".";
+}
+function priceCheckLinks(name){
+  const q=encodeURIComponent(name);
+  return '<a href="https://www.webstaurantstore.com/search/'+q+'.html" target="_blank" rel="noopener">WebstaurantStore</a>'
+    +' &middot; <a href="https://www.amazon.com/s?k='+q+'" target="_blank" rel="noopener">Amazon</a>';
+}
+
+/* ============ label renderer (ported from render_label) ============ */
+function renderLabel(recipeName, rounded, servings, servingG, ingredientsDesc, allergens){
+  function row(label, key, unit, indent, bold, dv){
+    const val = rounded[key]!=null?rounded[key]:0;
+    const cls = bold?"b":"";
+    const ind = indent===1?"ind1":(indent===2?"ind2":"");
+    const dec = (key==="sodium_mg"||key==="potassium_mg"||key==="cholesterol_mg"||key==="calories")?0:1;
+    let cells = '<td class="'+cls+' '+ind+'">'+esc(label)+' '+fmtNum(val,dec)+unit+'</td>';
+    if(dv!==false && DV[key]!=null) cells += '<td class="r b">'+dvPercent(key,val)+'%</td>';
+    else cells += '<td class="r"></td>';
+    return '<tr>'+cells+'</tr>';
+  }
+  return '<div class="nf">'
+    +'<h2>Nutrition Facts</h2>'
+    +'<div>'+servings+' servings per container</div>'
+    +'<div>Serving size '+fmtNum(servingG,0)+'g</div>'
+    +'<div class="rule"></div>'
+    +'<div>Amount per serving</div>'
+    +'<table><tr><td class="b">Calories</td><td class="r cal">'+fmtNum(rounded.calories||0,0)+'</td></tr></table>'
+    +'<div class="rule med"></div>'
+    +'<div class="dvhead">% Daily Value*</div>'
+    +'<table>'
+    +row("Total Fat","fat_g","g",0,true)
+    +row("Saturated Fat","sat_fat_g","g",1,false)
+    +row("Trans Fat","trans_fat_g","g",1,false,false)
+    +row("Cholesterol","cholesterol_mg","mg",0,true)
+    +row("Sodium","sodium_mg","mg",0,true)
+    +row("Total Carbohydrate","carbs_g","g",0,true)
+    +row("Dietary Fiber","fiber_g","g",1,false)
+    +row("Total Sugars","sugars_g","g",1,false,false)
+    +row("Protein","protein_g","g",0,true)
+    +row("Potassium","potassium_mg","mg",0,false)
+    +'</table><div class="rule thin"></div>'
+    +'<div class="foot">* The % Daily Value (DV) tells you how much a nutrient in '
+    +'a serving of food contributes to a daily diet. 2,000 calories a day is used '
+    +'for general nutrition advice.</div>'
+    +'</div>'
+    +'<div class="card"><b>INGREDIENTS:</b> '+esc(ingredientsDesc.join(", "))+".<br><br><b>"+esc(allergens)+'</b></div>'
+    +'<div class="warn"><b>Planning estimate only.</b> Values are computed from '
+    +'estimated nutrition data with simplified rounding \u2014 verify with lab analysis '
+    +'or professional nutrition software (e.g. ESHA Genesis) before printing '
+    +'commercial labels.</div>';
+}
+
+/* ============ view framework ============ */
+const view = document.getElementById("view");
+let curTab = "ingredients";
+const tabBtns = Array.prototype.slice.call(
+  document.querySelectorAll("#tabbar button"));
+tabBtns.forEach(b=>b.addEventListener("click",()=>showTab(b.getAttribute("data-v"))));
+function showTab(v){ curTab=v;
+  tabBtns.forEach(b=>b.classList.toggle("on", b.getAttribute("data-v")===v));
+  render();
+}
+function demoNote(){
+  return demoMode
+    ? '<div class="warn"><b>Demo mode.</b> Editing is disabled \u2014 switch back to \u201cMy data\u201d (top right) to make changes.</div>'
+    : '';
+}
+document.getElementById("demoToggle").addEventListener("click", function(){
+  demoMode=!demoMode;
+  this.textContent = demoMode ? "My data" : "View demo";
+  this.classList.toggle("on", demoMode);
+  document.getElementById("demoBanner").hidden = !demoMode;
+  render();
+});
+
+/* ============ Ingredients tab ============ */
+function renderIngredients(){
+  const ings = curIngredients().slice().sort((a,b)=>
+    String(a.name).toLowerCase().localeCompare(String(b.name).toLowerCase()));
+  let h = "<h1>Ingredients</h1>"+demoNote();
+  h += '<div class="card"><p>Log your ingredients and supplier prices. The app finds the '
+    +'<b>cheapest source per ingredient</b> among the prices <i>you</i> log, then costs '
+    +'recipes and bottles from those prices.</p>'
+    +'<p class="small">Honest note: this compares your own logged supplier prices \u2014 it does '
+    +'not scrape the web. Sites block bots and prices change constantly; the '
+    +'\u201ccheck price online\u201d links on each ingredient take you to the search '
+    +'page so you can compare by hand in seconds.</p></div>';
+  if(!demoMode) h += '<p><button class="btn" type="button" id="addIng">+ Add ingredient</button></p>';
+  if(!ings.length){
+    h += '<div class="card">No ingredients yet. '
+      +(demoMode?"":'Add your first one above, or ')+'try the <b>View demo</b> button up top.</div>';
+  }
+  for(const ing of ings){
+    const c = cheapestSupplier(ing);
+    let supRows="";
+    const sups = ing.suppliers||[];
+    for(let i=0;i<sups.length;i++){
+      const s=sups[i]; let perOz;
+      try{ perOz="$"+(pricePerGram(s)*GRAMS_PER_OZ).toFixed(3)+"/oz"; }
+      catch(e){ perOz="bad entry"; }
+      const cheap = (i===c.idx);
+      supRows += '<tr'+(cheap?' class="cheapest"':"")+'>'
+        +'<td>'+esc(s.supplier)+'</td>'
+        +'<td class="num">'+fmtMoney(s.price)+'</td>'
+        +'<td class="num">'+esc(s.size_amount)+' '+esc(s.size_unit)+'</td>'
+        +'<td class="num">'+perOz+(cheap?" \u2605 cheapest":"")+'</td></tr>';
+    }
+    if(!sups.length) supRows='<tr><td colspan="4" class="small">No supplier prices logged yet.</td></tr>';
+    h += '<div class="card"><h2>'+esc(ing.name)+'</h2>'
+      +'<p class="small">Category: '+esc(ing.category||"\u2014")
+      +' \u00b7 Allergens: '+esc((ing.allergens||[]).join(", ")||"none")
+      +' \u00b7 Nutrition: '+esc(ing.nutrition_key||"custom")
+      +'<br>'+priceCheckLinks(ing.name)+'</p>'
+      +'<table><tr><th>Supplier</th><th>Price</th><th>Size</th><th>Unit cost</th></tr>'
+      +supRows+'</table>'
+      +(demoMode?"":'<p><button class="btn ghost" type="button" data-edit-ing="'+esc(ing.name)+'">Edit / add prices</button></p>')
+      +'</div>';
+  }
+  view.innerHTML = h;
+  if(!demoMode){
+    const add=document.getElementById("addIng");
+    if(add) add.addEventListener("click",()=>renderIngredientForm(null));
+    view.querySelectorAll("[data-edit-ing]").forEach(b=>
+      b.addEventListener("click",()=>renderIngredientForm(b.getAttribute("data-edit-ing"))));
+  }
+}
+
+/* ============ Ingredient form ============ */
+function nutritionOptions(selected){
+  const table = mergedTable();
+  return Object.keys(table).filter(k=>k.charAt(0)!=="_").sort()
+    .map(k=>'<option value="'+esc(k)+'"'+(k===selected?" selected":"")+'>'
+      +esc(k.replace(/_/g," "))+(table[k].source&&table[k].source!=="estimate"?" (custom)":"")
+      +'</option>').join("");
+}
+function renderIngredientForm(name, scratchSuppliers){
+  if(demoMode){ view.innerHTML="<h1>Ingredient</h1>"+demoNote(); return; }
+  const ings = DB.ingredients;
+  const orig = name ? findIngredient(name, ings) : null;
+  /* For an existing ingredient we edit the live record (supplier adds save
+     immediately, like the Python app). New ingredients use the scratch array
+     until Save. */
+  const ing = orig ? orig
+    : {name:"",category:"",allergens:[],nutrition_key:"",suppliers:[]};
+  const scratch = scratchSuppliers || (orig ? null : []);
+  let h = "<h1>"+(orig?"Edit ingredient":"Add ingredient")+"</h1>";
+  h += '<div class="card"><label>Name<input id="f_name" value="'+esc(ing.name)+'" required></label>'
+    +'<label>Category<input id="f_cat" value="'+esc(ing.category||"")
+    +'" placeholder="base, spice, sweetener\u2026"></label>'
+    +'<label>Nutrition table entry<select id="f_nut">'+nutritionOptions(ing.nutrition_key)+'</select></label>'
+    +'<label>Allergens (FDA 9)</label><div>'
+    + FDA_ALLERGENS.map(a=>'<label class="check"><input type="checkbox" data-alg="'+esc(a)+'"'
+      +(((ing.allergens||[]).indexOf(a)>=0)?" checked":"")+'> '+esc(a)+'</label>').join("")
+    +'</div>'
+    +'<div class="card"><h3>Barcode lookup</h3>'
+    +'<p class="small">Scan a product barcode (or type it) to pull nutrition and allergens '
+    +'from Open Food Facts. Everything is pre-filled for you to review before saving.</p>'
+    +'<p><button class="btn ghost" type="button" id="scanBtn">Scan barcode</button></p>'
+    +'<div class="row2"><div><label>Barcode (manual)<input id="bc_code" inputmode="numeric" '
+    +'placeholder="e.g. 034000123456"></label></div>'
+    +'<div><label>&nbsp;</label><button class="btn" type="button" id="bc_go">Look up</button></div></div>'
+    +'<div id="bc_res"></div>'
+    +'<p class="small">Open Food Facts data is crowdsourced \u2014 verify before commercial use.</p>'
+    +'<div id="scanModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);'
+    +'z-index:50;flex-direction:column;align-items:center;justify-content:center;padding:20px">'
+    +'<div id="scanHolder" style="width:100%;max-width:340px"></div>'
+    +'<video id="scanVideo" playsinline muted style="width:100%;max-width:340px;border-radius:8px"></video>'
+    +'<p class="small" style="color:#fff">Point the camera at the barcode</p>'
+    +'<p><button class="btn ghost" type="button" id="scanCancel">Cancel</button></p>'
+    +'</div></div>'
+    +'<p><button class="btn" type="button" id="saveIng">Save ingredient</button> '
+    +(orig?'<button class="btn danger" type="button" id="delIng">Delete</button> ':"")
+    +'<button class="btn ghost" type="button" id="backIng">Back</button></p></div>';
+
+  /* USDA lookup (optional, needs key in Backup tab) */
+  if(DB.usdaKey){
+    h += '<div class="card"><h3>USDA FoodData Central lookup</h3>'
+      +'<label>Search<input id="usda_q" placeholder="Search USDA\u2026" value="'+esc(ing.name)+'"></label>'
+      +'<p><button class="btn ghost" type="button" id="usdaGo">Search USDA</button></p>'
+      +'<div id="usdaRes"></div></div>';
+  }else{
+    h += '<p class="small">Tip: add a free USDA FoodData Central API key on the Backup tab '
+      +'to enable one-click nutrition lookups (get one at api.nal.usda.gov).</p>';
+  }
+
+  /* supplier prices — orig edits write through on save; new ingredients use scratch */
+  const sups = orig ? ing.suppliers : scratch;
+  h += '<div class="card"><h3>Supplier prices</h3><table>'
+    +'<tr><th>Supplier</th><th>Price</th><th>Size</th><th></th></tr>'
+    + sups.map((s,i)=>'<tr><td>'+esc(s.supplier)+'</td><td class="num">'+fmtMoney(s.price)
+      +'</td><td class="num">'+esc(s.size_amount)+' '+esc(s.size_unit)+'</td>'
+      +'<td><button class="btn small danger" type="button" data-delsup="'+i+'">\u00d7</button></td></tr>').join("")
+    + (sups.length?"":'<tr><td colspan="4" class="small">None yet.</td></tr>')
+    +'</table><div class="row2"><div><label>Supplier<input id="s_sup" placeholder="Restaurant Depot"></label></div>'
+    +'<div><label>Price ($)<input id="s_price" type="number" step="0.01" min="0"></label></div></div>'
+    +'<div class="row2"><div><label>Size amount<input id="s_amt" type="number" step="any" min="0"></label></div>'
+    +'<div><label>Size unit<select id="s_unit">'
+    + UNIT_LIST.map(u=>'<option>'+u+'</option>').join("") +'</select></label></div></div>'
+    +'<p><button class="btn" type="button" id="addSup">Add price</button></p></div>';
+
+  view.innerHTML = h;
+  const val = id=>document.getElementById(id).value;
+  document.getElementById("backIng").addEventListener("click",renderIngredients);
+  document.getElementById("saveIng").addEventListener("click",()=>{
+    const data={name:val("f_name").trim(), category:val("f_cat").trim(),
+      nutrition_key:val("f_nut"),
+      allergens:Array.prototype.slice.call(view.querySelectorAll("[data-alg]"))
+        .filter(c=>c.checked).map(c=>c.getAttribute("data-alg")),
+      suppliers: orig ? ing.suppliers : scratch};
+    if(!data.name){ alert("Name is required."); return; }
+    if(orig){ const i=DB.ingredients.indexOf(orig); DB.ingredients[i]=data; }
+    else DB.ingredients.push(data);
+    /* keep recipe lines pointing at a renamed ingredient */
+    if(orig && orig.name!==data.name){
+      DB.recipes.forEach(r=>(r.lines||[]).forEach(l=>{
+        if(String(l.ingredient).toLowerCase()===orig.name.toLowerCase()) l.ingredient=data.name;
+      }));
+    }
+    saveDB(); renderIngredients();
+  });
+  const del=document.getElementById("delIng");
+  if(del) del.addEventListener("click",()=>{
+    if(confirm('Delete "'+ing.name+'"? Supplier prices go with it.')){
+      DB.ingredients.splice(DB.ingredients.indexOf(orig),1); saveDB(); renderIngredients();
+    }
+  });
+  /* keep unsaved field edits across the re-render that follows a supplier change */
+  function keepFields(){
+    return {name:val("f_name"),cat:val("f_cat"),nut:val("f_nut"),
+      alg:Array.prototype.slice.call(view.querySelectorAll("[data-alg]"))
+        .filter(c=>c.checked).map(c=>c.getAttribute("data-alg"))};
+  }
+  function restoreFields(keep){
+    document.getElementById("f_name").value=keep.name;
+    document.getElementById("f_cat").value=keep.cat;
+    document.getElementById("f_nut").value=keep.nut;
+    view.querySelectorAll("[data-alg]").forEach(c=>{
+      c.checked = keep.alg.indexOf(c.getAttribute("data-alg"))>=0; });
+  }
+  document.getElementById("addSup").addEventListener("click",()=>{
+    const sup=val("s_sup").trim(), price=parseFloat(val("s_price")),
+          amt=parseFloat(val("s_amt")), unit=val("s_unit");
+    if(!sup||!(price>=0)||!(amt>0)){ alert("Enter a supplier, price and positive size."); return; }
+    const entry={supplier:sup, price:price, size_amount:amt, size_unit:unit};
+    const keep=keepFields();
+    if(orig){ orig.suppliers.push(entry); saveDB(); }  /* saves immediately, like Python */
+    else scratch.push(entry);
+    renderIngredientForm(orig?orig.name:null, orig?null:scratch);
+    restoreFields(keep);
+  });
+  view.querySelectorAll("[data-delsup]").forEach(b=>b.addEventListener("click",()=>{
+    const i=Number(b.getAttribute("data-delsup"));
+    const keep=keepFields();
+    (orig?orig.suppliers:scratch).splice(i,1);
+    if(orig) saveDB();  /* immediate, like Python */
+    renderIngredientForm(orig?orig.name:null, orig?null:scratch);
+    restoreFields(keep);
+  }));
+  const ug=document.getElementById("usdaGo");
+  if(ug) ug.addEventListener("click",()=>usdaSearch(val("usda_q"), ing.name));
+  const sb=document.getElementById("scanBtn");
+  if(sb) sb.addEventListener("click",bcScan);
+  const bg=document.getElementById("bc_go");
+  if(bg) bg.addEventListener("click",()=>bcLookup(document.getElementById("bc_code").value));
+}
+
+/* ============ USDA lookup (ported from usda.py) ============ */
+function usdaError(msg){
+  const el=document.getElementById("usdaRes");
+  if(el) el.innerHTML='<div class="msg err">'+esc(msg)+'</div>';
+}
+async function usdaSearch(query, ingName){
+  const box=document.getElementById("usdaRes");
+  if(!DB.usdaKey){ usdaError("No USDA API key set. Add one on the Backup tab (free at api.nal.usda.gov)."); return; }
+  if(!query.trim()){ usdaError("Type something to search for."); return; }
+  box.innerHTML='<p class="small">Searching USDA\u2026</p>';
+  try{
+    const url=USDA_BASE+"/foods/search?"+new URLSearchParams({
+      api_key:DB.usdaKey, query:query.trim(), pageSize:"5",
+      dataType:"Foundation,SR Legacy"});
+    const r=await fetch(url);
+    if(!r.ok) throw new Error("USDA returned HTTP "+r.status);
+    const data=await r.json();
+    const foods=data.foods||[];
+    if(!foods.length){ box.innerHTML='<div class="msg">No results. Try a simpler term.</div>'; return; }
+    box.innerHTML="<ul>"+foods.map((f,i)=>{
+      const n=usdaNutrients(f);
+      return '<li><b>'+esc(f.description||"")+'</b> \u2014 '
+        +fmtNum(n.calories||0,0)+' kcal/100g '
+        +'<button class="btn small" type="button" data-fdc="'+esc(f.fdcId)+'" data-i="'+i+'">Use this</button></li>';
+    }).join("")+"</ul>";
+    box.querySelectorAll("[data-fdc]").forEach(b=>b.addEventListener("click",()=>
+      usdaUse(b.getAttribute("data-fdc"), ingName||query)));
+  }catch(e){
+    usdaError("USDA lookup failed: "+e.message
+      +". (If this is a network/CORS error, the key may still work from the Python app.)");
+  }
+}
+function usdaNutrients(food){
+  const nutrients={};
+  for(const fn of (food.foodNutrients||[])){
+    let num = fn.nutrientNumber!=null?fn.nutrientNumber:(fn.nutrient&&fn.nutrient.number);
+    num=parseInt(parseFloat(num),10);
+    if(isNaN(num)) continue;
+    const key=NUTRIENT_MAP[num];
+    /* NOTE: diverges from usda.py on purpose — the Python version only accepts
+       unit "G", which drops calories (FDC reports energy in KCAL). We accept KCAL
+       for calories so USDA imports carry energy values. */
+    const unit=String(fn.unitName||"G").toUpperCase();
+    if(key && (unit==="G" || (key==="calories"&&(unit==="KCAL"||unit==="KJ")))){
+      const v=parseFloat(fn.value);
+      if(!isNaN(v)) nutrients[key]=v;
+    }
+  }
+  return nutrients;
+}
+async function usdaUse(fdcId, ingName){
+  const box=document.getElementById("usdaRes");
+  box.innerHTML='<p class="small">Fetching nutrition\u2026</p>';
+  try{
+    const url=USDA_BASE+"/food/"+encodeURIComponent(fdcId)
+      +"?"+new URLSearchParams({api_key:DB.usdaKey});
+    const r=await fetch(url);
+    if(!r.ok) throw new Error("USDA returned HTTP "+r.status);
+    const food=await r.json();
+    const nutrients=usdaNutrients(food);
+    const entry={};
+    for(const k of NUTRIENT_KEYS) entry[k]=Math.round((Number(nutrients[k]||0))*100)/100;
+    entry.source="USDA FoodData Central (fdcId "+(food.fdcId||fdcId)+")";
+    const key="custom_"+String(ingName).toLowerCase().replace(/[^a-z0-9]+/g,"_").replace(/^_|_$/g,"");
+    DB.customNutrition[key]=entry;
+    const ing=findIngredient(ingName, DB.ingredients);
+    if(ing) ing.nutrition_key=key;
+    saveDB();
+    const sel=document.getElementById("f_nut");
+    if(sel){
+      if(!sel.querySelector('option[value="'+key+'"]')){
+        const o=document.createElement("option");
+        o.value=key; o.textContent=key.replace(/_/g," ")+" (USDA)";
+        sel.appendChild(o);
+      }
+      sel.value=key;
+    }
+    box.innerHTML='<div class="msg ok">Saved as a custom nutrition entry'
+      +' and linked in the nutrition dropdown above.</div>';
+  }catch(e){
+    usdaError("Could not fetch that food: "+e.message);
+  }
+}
+
+/* ============ Barcode scanning + Open Food Facts (ingredient form) ============
+   The page works fully offline. The html5-qrcode library is fetched from CDN
+   ONLY when the user taps "Scan barcode" and the native BarcodeDetector API
+   is unavailable. If the CDN fails (offline), manual entry is the fallback. */
+const OFF_ALLERGEN_MAP={
+  "en:milk":"milk","en:eggs":"eggs","en:fish":"fish",
+  "en:crustaceans":"crustacean shellfish","en:peanuts":"peanuts",
+  "en:nuts":"tree nuts","en:soybeans":"soybeans","en:soya":"soybeans",
+  "en:sesame-seeds":"sesame","en:sesame":"sesame",
+  "en:wheat":"wheat",
+  /* en:gluten mapped conservatively to wheat (US products: usually wheat);
+     the user reviews the checked boxes before saving. */
+  "en:gluten":"wheat"
+};
+function bcMsg(html, isErr){
+  const el=document.getElementById("bc_res");
+  if(el) el.innerHTML = html
+    ? '<div class="msg '+(isErr?"err":"ok")+'">'+html+'</div>' : "";
+}
+function scanModalShow(native){
+  const m=document.getElementById("scanModal");
+  document.getElementById("scanHolder").style.display = native?"none":"block";
+  document.getElementById("scanVideo").style.display = native?"block":"none";
+  m.style.display="flex";
+}
+function scanModalHide(){
+  document.getElementById("scanModal").style.display="none";
+}
+async function bcScan(){
+  /* zero-dependency path first */
+  if("BarcodeDetector" in window){
+    try{
+      const det=new BarcodeDetector(
+        {formats:["ean_13","ean_8","upc_a","upc_e","code_128","itf"]});
+      const code=await bcNativeScan(det);
+      if(code) bcLookup(code);
+      return;
+    }catch(e){
+      bcMsg("Camera scan failed ("+esc((e&&e.message)||e)+"). "
+        +"Type the barcode below instead.", true);
+      return;
+    }
+  }
+  /* on-demand CDN path */
+  try{ await loadHtml5Qrcode(); }
+  catch(e){
+    bcMsg("Could not load the scanner library (are you offline?). "
+      +"Type the barcode below instead.", true);
+    return;
+  }
+  bcHtml5Scan();
+}
+function bcNativeScan(detector){
+  return new Promise((resolve,reject)=>{
+    scanModalShow(true);
+    const video=document.getElementById("scanVideo");
+    let stream=null, stopped=false;
+    const cleanup=()=>{ stopped=true;
+      if(stream) stream.getTracks().forEach(t=>t.stop());
+      scanModalHide(); };
+    document.getElementById("scanCancel").onclick=()=>{ cleanup(); resolve(null); };
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia){
+      cleanup(); reject(new Error("camera not available")); return;
+    }
+    navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"},audio:false})
+      .then(s=>{ stream=s; video.srcObject=s; return video.play(); })
+      .then(()=>{
+        const tick=()=>{
+          if(stopped) return;
+          detector.detect(video).then(codes=>{
+            if(codes&&codes.length&&codes[0].rawValue){
+              const v=codes[0].rawValue; cleanup(); resolve(v); return;
+            }
+            setTimeout(tick,300);
+          }).catch(()=>setTimeout(tick,300));
+        };
+        tick();
+      })
+      .catch(err=>{ cleanup();
+        reject(new Error(err&&err.name==="NotAllowedError"
+          ? "camera permission denied" : "camera unavailable")); });
+  });
+}
+function loadHtml5Qrcode(){
+  return new Promise((resolve,reject)=>{
+    if(window.Html5Qrcode) return resolve();
+    const s=document.createElement("script");
+    s.src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js";
+    s.onload=()=>resolve();
+    s.onerror=()=>reject(new Error("cdn load failed"));
+    document.head.appendChild(s);
+  });
+}
+function bcHtml5Scan(){
+  scanModalShow(false);
+  let qr=null, done=false;
+  const cancelBtn=document.getElementById("scanCancel");
+  const finish=code=>{
+    if(done) return; done=true; cancelBtn.onclick=null;
+    const after=()=>{ scanModalHide(); if(code) bcLookup(code); };
+    try{ qr.stop().then(after).catch(after); }catch(e){ after(); }
+  };
+  cancelBtn.onclick=()=>finish(null);
+  try{
+    qr=new Html5Qrcode("scanHolder", /* verbose= */ false);
+    qr.start({facingMode:"environment"}, {fps:10, qrbox:{width:250,height:250}},
+      decodedText=>finish(decodedText),
+      ()=>{ /* per-frame decode errors are normal */ })
+      .catch(err=>{ scanModalHide();
+        bcMsg("Could not start the camera ("+esc((err&&err.message)||err)+"). "
+          +"Type the barcode below instead.", true); });
+  }catch(err){
+    scanModalHide();
+    bcMsg("Scanner failed to start. Type the barcode below instead.", true);
+  }
+}
+/* OFF reports sodium/cholesterol/potassium in GRAMS per 100g -> convert to mg.
+   energy-kcal_100g is kcal already. */
+function offNutrients(n){
+  const g=k=>{ const v=parseFloat(n[k+"_100g"]); return isNaN(v)?0:v; };
+  return {
+    calories:g("energy-kcal"), fat_g:g("fat"), sat_fat_g:g("saturated-fat"),
+    cholesterol_mg:g("cholesterol")*1000, sodium_mg:g("sodium")*1000,
+    carbs_g:g("carbohydrates"), fiber_g:g("fiber"), sugars_g:g("sugars"),
+    protein_g:g("proteins"), potassium_mg:g("potassium")*1000
+  };
+}
+function offAllergens(tags){
+  const found=[];
+  for(const t of (tags||[])){
+    const a=OFF_ALLERGEN_MAP[String(t).toLowerCase()];
+    if(a && found.indexOf(a)<0) found.push(a);
+  }
+  return found;
+}
+async function bcLookup(rawCode){
+  const code=String(rawCode||"").replace(/\D/g,"");
+  if(!/^\d{8,14}$/.test(code)){
+    bcMsg("That doesn't look like a barcode (need 8\u201314 digits).", true); return;
+  }
+  const box=document.getElementById("bc_res");
+  if(box) box.innerHTML='<p class="small">Looking up barcode\u2026</p>';
+  let product;
+  try{
+    const r=await fetch("https://world.openfoodfacts.org/api/v0/product/"
+      +encodeURIComponent(code)+".json");
+    if(!r.ok) throw new Error("network");
+    const d=await r.json();
+    if(d.status!==1||!d.product) throw new Error("not-found");
+    product=d.product;
+  }catch(e){
+    if(String(e&&e.message)==="not-found")
+      bcMsg("Barcode not found in Open Food Facts. Enter the nutrition manually.", true);
+    else
+      bcMsg("Lookup failed \u2014 check your connection and try again.", true);
+    return;
+  }
+  const nut=offNutrients(product.nutriments||{});
+  const entry={};
+  for(const k of NUTRIENT_KEYS) entry[k]=Math.round(nut[k]*100)/100;
+  entry.source="openfoodfacts barcode "+code;
+  const key="custom_off_"+code;
+  DB.customNutrition[key]=entry; saveDB();
+  const nameInput=document.getElementById("f_name");
+  const pname=product.product_name||"";
+  if(pname && nameInput && !nameInput.value.trim()) nameInput.value=pname;
+  const mapped=offAllergens(product.allergens_tags);
+  document.querySelectorAll("[data-alg]").forEach(c=>{
+    c.checked = mapped.indexOf(c.getAttribute("data-alg"))>=0;
+  });
+  const sel=document.getElementById("f_nut");
+  if(sel){
+    if(!sel.querySelector('option[value="'+key+'"]')){
+      const o=document.createElement("option");
+      o.value=key; o.textContent=key.replace(/_/g," ")+" (Open Food Facts)";
+      sel.appendChild(o);
+    }
+    sel.value=key;
+  }
+  bcMsg("Found: <b>"+esc(pname||code)+"</b> \u2014 form pre-filled. "
+    +"Review the name, nutrition and allergens before saving.", false);
+}
+
+/* ============ Recipes tab ============ */
+function renderRecipes(){
+  const recs = curRecipes();
+  let h = "<h1>Recipes</h1>"+demoNote();
+  if(!demoMode) h += '<p><button class="btn" type="button" id="addRec">+ New recipe</button></p>';
+  if(!recs.length) h += '<div class="card">No recipes yet.</div>';
+  for(const r of recs){
+    h += '<div class="card"><h2>'+esc(r.name)+'</h2>'
+      +'<p class="small">'+(r.lines||[]).length+' ingredients \u00b7 '
+      +fmtNum(totalGrams(r),0)+'g total</p><p>'
+      +'<button class="btn" type="button" data-cost="'+esc(r.name)+'">Cost it</button> '
+      +'<button class="btn ghost" type="button" data-makelabel="'+esc(r.name)+'">Make label</button> '
+      +(demoMode?"":'<button class="btn ghost" type="button" data-editrec="'+esc(r.name)+'">Edit</button>')
+      +'</p></div>';
+  }
+  view.innerHTML = h;
+  if(!demoMode){
+    const add=document.getElementById("addRec");
+    if(add) add.addEventListener("click",()=>renderRecipeForm(null));
+  }
+  view.querySelectorAll("[data-cost]").forEach(b=>b.addEventListener("click",()=>
+    renderRecipeCost(b.getAttribute("data-cost"))));
+  view.querySelectorAll("[data-makelabel]").forEach(b=>b.addEventListener("click",()=>
+    renderLabelView(b.getAttribute("data-makelabel"))));
+  view.querySelectorAll("[data-editrec]").forEach(b=>b.addEventListener("click",()=>
+    renderRecipeForm(b.getAttribute("data-editrec"))));
+}
+function renderRecipeForm(name){
+  if(demoMode){ view.innerHTML="<h1>Recipe</h1>"+demoNote(); return; }
+  const recs=DB.recipes;
+  const orig = name?findRecipe(name,recs):null;
+  const linesTxt = orig ? (orig.lines||[]).map(l=>l.ingredient+", "+l.grams).join("\n") : "";
+  const ings=DB.ingredients;
+  view.innerHTML = "<h1>"+(orig?"Edit recipe":"New recipe")+"</h1>"
+    +'<div class="card"><label>Recipe name<input id="r_name" value="'+esc(orig?orig.name:"")+'" required></label>'
+    +'<label>Ingredients \u2014 one per line as <i>Name, grams</i></label>'
+    +'<input list="inglist" id="r_helper" placeholder="Type to see ingredient names\u2026" '
+    +'onfocus="this.value=\x27\x27" style="margin-bottom:6px">'
+    +'<datalist id="inglist">'+ings.map(i=>'<option value="'+esc(i.name)+'">').join("")+'</datalist>'
+    +'<textarea id="r_lines" rows="12" placeholder="Tomato Paste, 400\nBrown Sugar, 150">'+esc(linesTxt)+'</textarea>'
+    +'<p class="small">Unknown names are flagged on the costing page '
+    +'(they need an ingredient record first).</p>'
+    +'<p><button class="btn" type="button" id="saveRec">Save recipe</button> '
+    +(orig?'<button class="btn danger" type="button" id="delRec">Delete</button> ':"")
+    +'<button class="btn ghost" type="button" id="backRec">Back</button></p></div>';
+  document.getElementById("backRec").addEventListener("click",renderRecipes);
+  document.getElementById("r_helper").addEventListener("change",function(){
+    const v=this.value.trim();
+    if(v && findIngredient(v,ings)){
+      const ta=document.getElementById("r_lines");
+      ta.value=(ta.value.trim()?ta.value.trim()+"\n":"")+v+", ";
+      ta.focus();
+    }
+    this.value="";
+  });
+  document.getElementById("saveRec").addEventListener("click",()=>{
+    const rname=document.getElementById("r_name").value.trim();
+    if(!rname){ alert("Recipe name is required."); return; }
+    const lines=[];
+    for(const raw0 of document.getElementById("r_lines").value.split("\n")){
+      const raw=raw0.trim();
+      if(!raw||raw.indexOf(",")<0) continue;
+      const idx=raw.lastIndexOf(",");
+      const grams=parseFloat(raw.slice(idx+1).trim());
+      if(isNaN(grams)) continue;
+      lines.push({ingredient:raw.slice(0,idx).trim(), grams:grams});
+    }
+    const data={name:rname, lines:lines};
+    if(orig){ DB.recipes.splice(DB.recipes.indexOf(orig),1); }
+    else { const dup=findRecipe(rname,DB.recipes); if(dup) DB.recipes.splice(DB.recipes.indexOf(dup),1); }
+    DB.recipes.push(data); saveDB();
+    renderRecipeCost(rname);
+  });
+  const del=document.getElementById("delRec");
+  if(del) del.addEventListener("click",()=>{
+    if(confirm('Delete recipe "'+orig.name+'"?')){
+      DB.recipes.splice(DB.recipes.indexOf(orig),1); saveDB(); renderRecipes();
+    }
+  });
+}
+function renderRecipeCost(name, y){
+  const ings=curIngredients(), recs=curRecipes();
+  const recipe=findRecipe(name,recs);
+  if(!recipe){ view.innerHTML="<h1>Not found</h1><div class='card'>Recipe not found.</div>"; return; }
+  y=y||{bottles:"",bottle_oz:"",retail:""};
+  const rc=recipeCost(recipe,ings);
+  let rows="", missing=false;
+  for(const l of rc.lines){
+    if(l.missing){
+      missing=true;
+      rows+='<tr><td>'+esc(l.name)+'</td><td class="num">'+fmtNum(l.grams,1)+'g</td>'
+        +'<td colspan="3" class="small">No ingredient record \u2014 add it on the Ingredients tab.</td></tr>';
+    }else{
+      rows+='<tr><td>'+esc(l.name)+'</td><td class="num">'+fmtNum(l.grams,1)+'g</td>'
+        +'<td>'+esc(l.supplier||"no prices logged")+'</td>'
+        +'<td class="num">'+(l.price_per_oz!=null?"$"+l.price_per_oz.toFixed(3)+"/oz":"\u2014")+'</td>'
+        +'<td class="num">'+fmtMoney(l.cost)+'</td></tr>';
+    }
+  }
+  let yieldHtml="";
+  const nb=parseFloat(y.bottles), bo=parseFloat(y.bottle_oz);
+  if(nb>0&&bo>0){
+    const perBottle=rc.total/nb;
+    yieldHtml='<div class="card"><h3>Yield</h3><p>Batch cost <b>'+fmtMoney(rc.total)
+      +'</b> \u00f7 '+fmtNum(nb,0)+' bottles ('+fmtNum(bo,1)+' oz each) = <b>'
+      +fmtMoney(perBottle)+' per bottle</b></p>';
+    const r=parseFloat(y.retail);
+    if(!isNaN(r)&&r>0){
+      const margin=(r-perBottle)/r*100;
+      yieldHtml+='<p>At a $'+fmtNum(r,2)+' retail price: <b>'+margin.toFixed(1)
+        +'% margin</b> ('+fmtMoney(r-perBottle)+' profit per bottle).</p>';
+    }
+    yieldHtml+='</div>';
+  }
+  view.innerHTML="<h1>Costing \u2014 "+esc(recipe.name)+"</h1>"+demoNote()
+    +'<table><tr><th>Ingredient</th><th>Amount</th><th>Cheapest supplier</th>'
+    +'<th>Unit cost</th><th>Line cost</th></tr>'+rows+'</table>'
+    +'<div class="card"><h3>Batch total: '+fmtMoney(rc.total)+'</h3>'
+    +'<p class="small">Costed from each ingredient\u2019s cheapest logged supplier.</p>'
+    +(demoMode&&rc.total?'<p>At 24 \u00d7 12&nbsp;oz bottles: <b>'+fmtMoney(rc.total/24)+' per bottle</b></p>':"")
+    +'</div>'
+    +(missing?'<div class="warn">Some lines couldn\u2019t be costed (missing ingredient or '
+      +'supplier prices). Add them on the Ingredients tab.</div>':"")
+    +(demoMode?"":'<div class="card"><h3>Bottle costing &amp; margin</h3>'
+      +'<div class="row2"><div><label>Bottles per batch<input id="y_b" type="number" step="any" min="0" value="'+esc(y.bottles)+'" placeholder="24"></label></div>'
+      +'<div><label>Bottle size (oz)<input id="y_o" type="number" step="any" min="0" value="'+esc(y.bottle_oz)+'" placeholder="12"></label></div></div>'
+      +'<label>Target retail price ($)<input id="y_r" type="number" step="any" min="0" value="'+esc(y.retail)+'" placeholder="8.99"></label>'
+      +'<p><button class="btn" type="button" id="y_go">Calculate</button></p></div>')
+    +yieldHtml
+    +'<p><button class="btn ghost" type="button" id="backCost">Back to recipes</button></p>';
+  document.getElementById("backCost").addEventListener("click",renderRecipes);
+  const go=document.getElementById("y_go");
+  if(go) go.addEventListener("click",()=>renderRecipeCost(name,{
+    bottles:document.getElementById("y_b").value,
+    bottle_oz:document.getElementById("y_o").value,
+    retail:document.getElementById("y_r").value}));
+}
+
+/* ============ Labels tab ============ */
+function renderLabels(){
+  const recs=curRecipes();
+  let h="<h1>Label maker</h1>"+demoNote();
+  if(!recs.length){
+    h+='<div class="card">No recipes yet.</div>';
+  }else{
+    h+='<div class="card"><label>Recipe<select id="l_rec">'
+      +recs.map(r=>'<option>'+esc(r.name)+'</option>').join("")
+      +'</select></label>'
+      +'<label>Serving size (grams) \u2014 FDA reference for BBQ sauce is 30g'
+      +'<input id="l_serv" type="number" step="any" min="1" value="30"></label>'
+      +'<p><button class="btn" type="button" id="l_go">Generate label</button></p></div>';
+  }
+  h+='<div class="warn"><b>Planning estimates only.</b> Simplified rounding is applied; '
+    +'verify with lab analysis or professional nutrition software before printing '
+    +'commercial labels.</div>';
+  view.innerHTML=h;
+  const go=document.getElementById("l_go");
+  if(go) go.addEventListener("click",()=>{
+    let sg=parseFloat(document.getElementById("l_serv").value);
+    if(!(sg>0)) sg=30;
+    renderLabelView(document.getElementById("l_rec").value, sg);
+  });
+}
+function renderLabelView(name, servingG){
+  const ings=curIngredients(), recs=curRecipes(), table=mergedTable();
+  const recipe=findRecipe(name,recs);
+  if(!recipe){ view.innerHTML="<h1>Not found</h1><div class='card'>Recipe not found.</div>"; return; }
+  let sg=parseFloat(servingG); if(!(sg>0)) sg=30;
+  const ln=labelNutrition(recipe,ings,table,sg);
+  view.innerHTML="<h1>Label \u2014 "+esc(recipe.name)+"</h1>"+demoNote()
+    +renderLabel(recipe.name, ln.rounded, ln.servings, sg,
+        ingredientListDesc(recipe), allergenStatement(recipe,ings))
+    +'<p class="noprint"><button class="btn" type="button" id="printLbl">Print label</button> '
+    +'<button class="btn ghost" type="button" id="backLbl">Back</button></p>';
+  document.getElementById("printLbl").addEventListener("click",()=>window.print());
+  const back=()=>{ showTab("labels"); };
+  document.getElementById("backLbl").addEventListener("click",back);
+}
+
+/* ============ Backup tab ============ */
+function renderBackup(){
+  let h="<h1>Backup &amp; settings</h1>";
+  h+='<div class="card"><h3>USDA FoodData Central API key</h3>'
+    +'<p class="small">Optional. Enables one-click nutrition lookups on the ingredient form. '
+    +'Free key at api.nal.usda.gov. Stored only on this device.</p>'
+    +'<label>API key<input id="b_key" value="'+esc(DB.usdaKey)+'" '
+    +'placeholder="paste key here" autocomplete="off"></label>'
+    +'<p><button class="btn" type="button" id="b_saveKey">Save key</button> '
+    +(DB.usdaKey?'<button class="btn ghost" type="button" id="b_delKey">Remove key</button>':"")
+    +'</p></div>';
+  h+='<div class="card"><h3>Export / import</h3>'
+    +'<p class="small">Your ingredients, recipes and custom nutrition entries live in this '
+    +'browser on this device. Export a backup file before switching devices.</p>'
+    +'<p><button class="btn" type="button" id="b_exp">Export backup (JSON)</button></p>'
+    +'<label>Import backup<input id="b_imp" type="file" accept="application/json,.json"></label>'
+    +'<div id="b_impmsg"></div></div>';
+  h+='<div class="card"><h3>Danger zone</h3>'
+    +'<p><button class="btn danger" type="button" id="b_clear">Clear all my data</button></p>'
+    +'<p class="small">Removes your ingredients, recipes, custom nutrition and API key '
+    +'from this device. Cannot be undone.</p></div>';
+  if(demoMode) h+='<div class="warn"><b>Demo mode.</b> Backup actions apply to <i>your</i> data, not the demo dataset.</div>';
+  view.innerHTML=h;
+  document.getElementById("b_saveKey").addEventListener("click",()=>{
+    DB.usdaKey=document.getElementById("b_key").value.trim(); saveDB();
+    renderBackup();
+  });
+  const dk=document.getElementById("b_delKey");
+  if(dk) dk.addEventListener("click",()=>{ DB.usdaKey=""; saveDB(); renderBackup(); });
+  document.getElementById("b_exp").addEventListener("click",()=>{
+    const payload={app:"deadass-bbq-toolkit", version:1,
+      exportedAt:new Date().toISOString(),
+      ingredients:DB.ingredients, recipes:DB.recipes,
+      customNutrition:DB.customNutrition, usdaKey:DB.usdaKey};
+    const blob=new Blob([JSON.stringify(payload,null,2)],{type:"application/json"});
+    const a=document.createElement("a");
+    a.href=URL.createObjectURL(blob);
+    a.download="deadass-bbq-backup-"+new Date().toISOString().slice(0,10)+".json";
+    document.body.appendChild(a); a.click();
+    setTimeout(()=>{URL.revokeObjectURL(a.href); a.remove();},500);
+  });
+  document.getElementById("b_imp").addEventListener("change",function(){
+    const f=this.files[0]; const msg=document.getElementById("b_impmsg");
+    if(!f) return;
+    const rd=new FileReader();
+    rd.onload=()=>{
+      try{
+        const d=JSON.parse(rd.result);
+        if(!d||!Array.isArray(d.ingredients)||!Array.isArray(d.recipes))
+          throw new Error("not a Deadass BBQ backup");
+        if(!confirm("Replace ALL your current data with this backup?")) return;
+        DB.ingredients=d.ingredients; DB.recipes=d.recipes;
+        DB.customNutrition=(d.customNutrition&&typeof d.customNutrition==="object")?d.customNutrition:{};
+        DB.usdaKey=typeof d.usdaKey==="string"?d.usdaKey:"";
+        saveDB();
+        msg.innerHTML='<div class="msg ok">Backup imported.</div>';
+      }catch(e){ msg.innerHTML='<div class="msg err">Import failed: '+esc(e.message)+'</div>'; }
+      this.value="";
+    };
+    rd.readAsText(f);
+  });
+  document.getElementById("b_clear").addEventListener("click",()=>{
+    if(confirm("Delete ALL your ingredients, recipes, custom nutrition and API key from this device?")){
+      DB={ingredients:[],recipes:[],customNutrition:{},usdaKey:""}; saveDB(); renderBackup();
+    }
+  });
+}
+
+/* ============ init ============ */
+function render(){
+  if(curTab==="ingredients") renderIngredients();
+  else if(curTab==="recipes") renderRecipes();
+  else if(curTab==="labels") renderLabels();
+  else if(curTab==="backup") renderBackup();
+}
+loadDB();
+showTab("ingredients");
+</script>
+</body>
+</html>
