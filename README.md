@@ -3,6 +3,10 @@
 Ingredient sourcing & recipe costing + nutrition/ingredient label maker for
 **DeadassBBQ LLC**. Python stdlib only — no dependencies, no build step.
 
+![Deadass BBQ Toolkit app](demo.png)
+
+*The toolkit app, live at https://cnoteninja.github.io/deadass-bbq-toolkit/*
+
 ## Phone / browser version (no server needed)
 
 A full static version lives in `docs/index.html` — same features as the Python
